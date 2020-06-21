@@ -1,17 +1,20 @@
 import simpleGit, { SimpleGit } from 'simple-git';
 
 const USER = 'jguerrmi';
-const PASS = '';
-const REPO = 'https://steps.everis.com/git/IWOKIO/iwok.reposiory.git';
+const PASS = process.env.PWD;
+const REPO = 'steps.everis.com/git/IWOKIO/iwok.reposiory.git';
 
-const workSpace ='/Users/juanlu/dev/node/ws';
+const workSpace ='/Users/juanlu/dev/node/iwok.repository';
+
+const git = simpleGit(workSpace)
 
 const main: Function = () => {
     console.log('Trying to connect...');
 
-    Authenticate();
-    
-    doSomething();
+    // Authenticate();    
+    // doSomething();
+
+    doPull();
 
     console.log('Connected !')
 
@@ -19,33 +22,36 @@ const main: Function = () => {
 
 const Authenticate: Function = () => {
 
-    const git = require('simple-git');
     const remote = `https://${USER}:${PASS}@${REPO}`;
 
-    git().silent(true)
+    git.silent(true)
         .clone(remote)
         .then(() => console.log('finished'))
-        .catch((err) => console.error('failed: ', err));
+        .catch((err: any) => console.error('failed: ', err));
+}
+
+const doPull: Function = async () => {
+    try {
+        await git.pull('origin', 'master');
+        
+        const status = await git.status();
+        
+        console.log(`Status: ${status}`);
+        
+    } catch (error) {
+        console.log(`Error: ${error}`);        
+    }
 }
 
 const doSomething: Function = async () => {
-    // const git: SimpleGit = simpleGit(workSpace);
-    // const initResult = await git.init();
-    // const addRemoteResult = await git.addRemote('origin', repoUrl);
-
-    const git = simpleGit()
-    try {
-        await git.init().catch(ignoreError);
-        //await git.clone(workSpace);
     
-
-        await git.pull('origin', 'master');
-        
+    try {
+        await git.init().catch(ignoreError);        
+        //await git.clone(workSpace);    
     }
     catch (e) { 
         /* handle all errors here */ 
-        console.log(`Error: ${e}`);
-        
+        console.log(`Error: ${e}`);        
     }
 
     function ignoreError () {
